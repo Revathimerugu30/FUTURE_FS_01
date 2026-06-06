@@ -12,8 +12,8 @@
     }
   ],
   "routes": [
-    { "src": "/assets/(.*)", "dest": "/dist/client/assets/$1" },
-    { "src": "/(.*)", "dest": "/api/ssr" }
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "^/(.*)$", "dest": "/api/ssr" }
   ],
   "functions": {
     "api/ssr.js": {
