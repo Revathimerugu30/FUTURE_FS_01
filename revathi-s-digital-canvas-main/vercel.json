@@ -1,23 +1,11 @@
 {
   "version": 3,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "dist/client" }
-    },
-    {
-      "src": "dist/server/server.js",
-      "use": "@vercel/node",
-      "config": { "includeFiles": ["dist/server/**", "dist/client/**"] }
-    }
-  ],
   "routes": [
     { "src": "/assets/(.*)", "dest": "/dist/client/assets/$1" },
-    { "src": "^/(.*)$", "dest": "/api/ssr" }
+    { "src": "/(.*)", "dest": "/api/ssr" }
   ],
   "functions": {
-    "dist/server/server.js": {
+    "api/ssr.js": {
       "runtime": "nodejs18.x",
       "maxDuration": 10
     }
