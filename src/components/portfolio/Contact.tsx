@@ -9,7 +9,6 @@ export function Contact() {
   const send = useServerFn(sendContactMessage);
   const [state, setState] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -26,9 +25,8 @@ export function Contact() {
         },
       });
       if (!result?.ok) {
-        throw new Error(result?.error ?? "Unable to send message. Please try again later.");
+        throw new Error(result?.error ?? "Unable to submit your message. Please try again later.");
       }
-      setPreviewUrl((result as any).previewUrl ?? null);
       setState("success");
       form.reset();
     } catch (err) {
@@ -126,12 +124,7 @@ export function Contact() {
           </button>
           {state === "success" && (
             <p className="flex items-center gap-2 text-sm text-accent" role="status" aria-live="polite">
-              <FiCheck /> Message sent — I'll reply soon.
-            </p>
-          )}
-          {previewUrl && (
-            <p className="mt-2 text-sm">
-              Preview (dev): <a href={previewUrl} target="_blank" rel="noreferrer" className="underline">Open email</a>
+              <FiCheck /> Message sent successfully — thank you!
             </p>
           )}
           {state === "error" && (

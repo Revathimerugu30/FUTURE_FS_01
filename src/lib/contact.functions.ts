@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { sendContactEmail } from "./contact.server";
+import { storeContactMessage } from "./contact.server";
 
 const ContactSchema = z.object({
   name: z.string().trim().min(1, "Name required").max(100),
@@ -19,20 +19,14 @@ export const sendContactMessage = createServerFn({ method: "POST" })
         at: new Date().toISOString(),
       });
 
-      const result = await sendContactEmail(data);
-      if (!result.ok) {
-        console.error("[contact] email send failed", result.error);
-        throw new Error(result.error ?? "Unable to send your message right now.");
-      }
+      await storeContactMessage(data);
 
-      // Return full result so callers can access previewUrl in dev
-      return result;
+      return { ok: true as const };
     } catch (error) {
       console.error("[contact] handler error", error);
-      throw new Error(
-        error instanceof Error
-          ? error.message
-          : "Unable to submit your message right now. Please try again later."
-      );
+      return {
+        ok: false as const,
+        error: "Unable to submit your message right now. Please try again later.",
+      };
     }
   });
