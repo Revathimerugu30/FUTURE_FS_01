@@ -4,7 +4,9 @@
     {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist/client" }
+      "config": {
+        "distDir": "dist/client"
+      }
     },
     {
       "src": "api/ssr.js",
@@ -12,13 +14,16 @@
     }
   ],
   "routes": [
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "^/(.*)$", "dest": "/api/ssr" }
-  ],
-  "functions": {
-    "api/ssr.js": {
-      "runtime": "nodejs18.x",
-      "maxDuration": 10
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/ssr.js"
     }
-  }
+  ]
 }
