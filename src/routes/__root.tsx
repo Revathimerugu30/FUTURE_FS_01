@@ -115,6 +115,43 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    const handleContextMenu = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("img") || target?.closest(".protected-content")) {
+        event.preventDefault();
+      }
+    };
+
+    const handleDragStart = (event: DragEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("img") || target?.closest(".protected-content")) {
+        event.preventDefault();
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const blocked = ["PrintScreen", "F12"];
+      const ctrlBlocked = ["s", "p", "u", "a", "c", "x"];
+      if (blocked.includes(event.key)) {
+        event.preventDefault();
+      }
+      if ((event.ctrlKey || event.metaKey) && ctrlBlocked.includes(event.key.toLowerCase())) {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("dragstart", handleDragStart);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("dragstart", handleDragStart);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}

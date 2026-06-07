@@ -9,25 +9,52 @@ export function Contact() {
   const send = useServerFn(sendContactMessage);
   const [state, setState] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setState("loading");
     setError(null);
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     try {
-      await send({
+      const result = await send({
         data: {
           name: String(fd.get("name") ?? ""),
           email: String(fd.get("email") ?? ""),
           message: String(fd.get("message") ?? ""),
         },
       });
+      if (!result?.ok) {
+        throw new Error(result?.error ?? "Unable to send message. Please try again later.");
+      }
+      setPreviewUrl((result as any).previewUrl ?? null);
       setState("success");
-      e.currentTarget.reset();
+      form.reset();
     } catch (err) {
+      // Normalize error message for better UX; avoid dumping full HTML error pages
+      console.error("[contact] submit error", err);
+      let message = "Something went wrong";
+      if (err instanceof Error && err.message) {
+        message = err.message;
+      } else if (typeof err === "string") {
+        message = err;
+      } else {
+        try {
+          message = JSON.stringify(err);
+        } catch {}
+      }
+
+      // Strip HTML responses and long stack traces
+      if (message.trim().startsWith("<!doctype") || message.trim().startsWith("<html")) {
+        message = "Server error. Please try again later or contact me directly via email.";
+      }
+      if (message.length > 300) {
+        message = message.slice(0, 300) + "...";
+      }
+
       setState("error");
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(message);
     }
   }
 
@@ -98,10 +125,19 @@ export function Contact() {
             {state === "loading" ? "Sending…" : (<><FiSend /> Send message</>)}
           </button>
           {state === "success" && (
-            <p className="flex items-center gap-2 text-sm text-accent"><FiCheck /> Message sent — I'll reply soon.</p>
+            <p className="flex items-center gap-2 text-sm text-accent" role="status" aria-live="polite">
+              <FiCheck /> Message sent — I'll reply soon.
+            </p>
+          )}
+          {previewUrl && (
+            <p className="mt-2 text-sm">
+              Preview (dev): <a href={previewUrl} target="_blank" rel="noreferrer" className="underline">Open email</a>
+            </p>
           )}
           {state === "error" && (
-            <p className="flex items-center gap-2 text-sm text-destructive"><FiAlertCircle /> {error}</p>
+            <p className="flex items-center gap-2 text-sm text-destructive" role="alert" aria-live="assertive">
+              <FiAlertCircle /> {error}
+            </p>
           )}
         </motion.form>
       </div>

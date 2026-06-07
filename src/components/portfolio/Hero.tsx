@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { FiDownload, FiMail, FiArrowRight, FiGithub, FiLinkedin } from "react-icons/fi";
 import portrait from "@/assets/revathi-portrait.jpg";
+import { ResumeDownload } from "./ResumeDownload";
 
 export function Hero() {
   return (
@@ -33,13 +34,7 @@ export function Hero() {
             >
               View Projects <FiArrowRight />
             </a>
-            <a
-              href="/resume.pdf"
-              download
-              className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold glass-strong hover:bg-white/10 transition"
-            >
-              <FiDownload /> Download Resume
-            </a>
+            <ResumeDownload className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold glass-strong hover:bg-white/10 transition" />
             <a
               href="#contact"
               className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold glass hover:bg-white/10 transition"
@@ -69,7 +64,11 @@ export function Hero() {
                 alt="Revathi Merugu, Full Stack Developer"
                 width={896}
                 height={896}
-                className="w-full h-full object-cover"
+                draggable={false}
+                onContextMenu={(event) => event.preventDefault()}
+                onDragStart={(event) => event.preventDefault()}
+                style={{ userSelect: "none", WebkitUserDrag: "none" }}
+                className="w-full h-full object-cover select-none protected-image"
               />
             </div>
             <div className="mt-3 flex items-center justify-between px-3 py-2 text-xs">

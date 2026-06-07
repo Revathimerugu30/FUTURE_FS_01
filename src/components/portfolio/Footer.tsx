@@ -1,4 +1,5 @@
-import { FiGithub, FiLinkedin, FiMail, FiDownload } from "react-icons/fi";
+import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
+import { ResumeDownload } from "./ResumeDownload";
 
 export function Footer() {
   return (
@@ -16,20 +17,21 @@ export function Footer() {
           <FooterLink href="https://github.com/dashboard" label="GitHub"><FiGithub /></FooterLink>
           <FooterLink href="https://www.linkedin.com/in/revathi-merugu-0370b3343" label="LinkedIn"><FiLinkedin /></FooterLink>
           <FooterLink href="mailto:revathimerugu30@gmail.com" label="Email"><FiMail /></FooterLink>
-          <FooterLink href="/resume.pdf" label="Resume"><FiDownload /></FooterLink>
+          <ResumeDownload className="size-10 grid place-items-center rounded-xl glass hover:bg-white/10 transition" iconOnly />
         </div>
       </div>
     </footer>
   );
 }
 
-function FooterLink({ href, label, children }: { href: string; label: string; children: React.ReactNode }) {
+function FooterLink({ href, label, children, download }: { href: string; label: string; children: React.ReactNode; download?: string }) {
   return (
     <a
       href={href}
       target={href.startsWith("http") ? "_blank" : undefined}
       rel="noreferrer"
       aria-label={label}
+      download={download}
       className="size-10 grid place-items-center rounded-xl glass hover:bg-white/10 transition"
     >
       {children}

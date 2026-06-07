@@ -94,6 +94,20 @@
   }
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
   ::selection { background: oklch(0.72 0.22 295 / 0.4); color: var(--color-foreground); }
+
+  .protected-image,
+  .protected-content {
+    user-select: none;
+    -webkit-user-drag: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: none;
+    cursor: default;
+  }
+
+  .protected-content::selection {
+    background: transparent;
+  }
 }
 
 @utility glass {
