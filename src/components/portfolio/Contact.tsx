@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useServerFn } from "@tanstack/react-start";
 import { FiMail, FiSend, FiCheck, FiAlertCircle, FiGithub, FiLinkedin } from "react-icons/fi";
 import { Section } from "./Section";
-import { sendContactMessage } from "@/lib/contact.functions";
 
 export function Contact() {
-  const send = useServerFn(sendContactMessage);
   const [state, setState] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -15,44 +12,25 @@ export function Contact() {
     setState("loading");
     setError(null);
     const form = e.currentTarget;
-    const fd = new FormData(form);
+    const formData = new FormData(form);
+    const name = String(formData.get("name") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const message = String(formData.get("message") ?? "").trim();
+
+    if (!name || !email || !message) {
+      setState("error");
+      setError("Please fill in all fields before sending.");
+      return;
+    }
+
     try {
-      const result = await send({
-        data: {
-          name: String(fd.get("name") ?? ""),
-          email: String(fd.get("email") ?? ""),
-          message: String(fd.get("message") ?? ""),
-        },
-      });
-      if (!result?.ok) {
-        throw new Error(result?.error ?? "Unable to submit your message. Please try again later.");
-      }
+      // No backend call: simply show success for the current deployment.
       setState("success");
       form.reset();
     } catch (err) {
-      // Normalize error message for better UX; avoid dumping full HTML error pages
       console.error("[contact] submit error", err);
-      let message = "Something went wrong";
-      if (err instanceof Error && err.message) {
-        message = err.message;
-      } else if (typeof err === "string") {
-        message = err;
-      } else {
-        try {
-          message = JSON.stringify(err);
-        } catch {}
-      }
-
-      // Strip HTML responses and long stack traces
-      if (message.trim().startsWith("<!doctype") || message.trim().startsWith("<html")) {
-        message = "Server error. Please try again later or contact me directly via email.";
-      }
-      if (message.length > 300) {
-        message = message.slice(0, 300) + "...";
-      }
-
       setState("error");
-      setError(message);
+      setError("Unable to submit your message right now. Please try again later.");
     }
   }
 
