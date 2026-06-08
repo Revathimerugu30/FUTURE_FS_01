@@ -42,7 +42,7 @@ export function ResumeDownload({ className, label = "Download Resume", iconOnly 
   return (
     <a
       href="/resume/Main_Resume2.pdf"
-      download="Revathi_Merugu_Resume.pdf"
+      download="Main_Resume2.pdf"
       className={className}
       aria-label={iconOnly ? "Download Resume" : undefined}
     >
