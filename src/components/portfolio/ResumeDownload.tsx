@@ -12,7 +12,7 @@ export function ResumeDownload({ className, label = "Download Resume", iconOnly 
 
   useEffect(() => {
     let active = true;
-    fetch("/resume.pdf", { method: "HEAD", cache: "no-store" })
+    fetch("/resume/Main_Resume2.pdf", { method: "HEAD", cache: "no-store" })
       .then((response) => {
         if (!active) return;
         setAvailable(response.ok);
@@ -41,8 +41,8 @@ export function ResumeDownload({ className, label = "Download Resume", iconOnly 
 
   return (
     <a
-      href="/resume.pdf"
-      download="Revathi-Merugu-Resume.pdf"
+      href="/resume/Main_Resume2.pdf"
+      download="Revathi_Merugu_Resume.pdf"
       className={className}
       aria-label={iconOnly ? "Download Resume" : undefined}
     >
